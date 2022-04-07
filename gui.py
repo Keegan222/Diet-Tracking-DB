@@ -1,28 +1,86 @@
 import mysql.connector
 from tkinter import *
 
-def connect(email, password):
-    global db
+def login(email, password):
+    global db, current_email
+    cursor = db.cursor()
 
-    #Check if email and password exists
-    #If not throw exception
+    #Get password
+    cursor.execute("SELECT password_hash "
+        "FROM user_data "
+        "WHERE email_address = %s", (email,))
+    result = cursor.fetchone()
+
+    #Check if email exists
+    if result == None:
+        return "Account does not exist"
+
+    #Check if password is correct
+    if result[0] != password:
+        return "Invalid password"
+
+    # Set global email variable
+    current_email = email
 
     #Change scene to user page
-    #This will only run if there are no exceptions
     change_page(user_page)
 
-def create(email, password):
-    global db
+    return "Success"
+
+def create(first_name, middle_name, last_name, email, password):
+    global db, current_email
+    cursor = db.cursor()
+
+    #Check if first name is valid
+    if len(first_name) == 0 or len(first_name) > 256:
+        return "Invalid first name"
+
+    #check if middle name is valid
+    if len(middle_name) > 256:
+        return "Invalid middle name"
+
+    #Check if last name is valid
+    if len(last_name) == 0 or len(last_name) > 256:
+        return "Invalid last name"
+
+    #Check if email is valid
+    if len(email) == 0:
+        return "Invalid email"
+        
+    #Check if password is valid
+    if len(password) == 0 or len(password) > 256:
+        return "Invalid password"
 
     # Check if the account already exists
-    # If it does throw exception
+    cursor.execute("SELECT 1 "
+        "FROM user_data "
+        "WHERE email_address = %s", (email,))
+
+    if len(cursor.fetchall()) != 0:
+        return "Account already exists for this email"
 
     # Add row to the DB
-    # Sign new user in automatically
+    sql = "INSERT INTO user_data " \
+        "(first_name, middle_name, last_name, email_address, premium, password_hash) " \
+        "VALUES (%s, %s, %s, %s, %s, %s)"
+    values = (first_name, middle_name, last_name, email, 0, password)
+    cursor.execute(sql, values)
+    db.commit()
+
+    # Set global email variable
+    current_email = email
 
     # Change scene to user page
     change_page(user_page)
 
+    return "Success"
+
+def set_error_label(label, result):
+    #Only set error label if result is not successful.
+    #Otherwise it will throw errors if the label is changed after the page is changes
+    if (result != "Success"):
+        label.configure(text=result)
+    
 def login_page(root):
     page = Frame(root)
     page.grid()
@@ -30,25 +88,44 @@ def login_page(root):
     #Create Email and Password labels
     email_label = Label(page, text ="Email: ")
     email_label.grid(column = 0, row = 0, sticky="ew")
-
     email = Entry(page)
     email.grid(column = 1, row = 0, columnspan=200, sticky="ew")
 
     password_label = Label(page, text ="Password: ")
     password_label.grid(column = 0, row = 1, sticky="ew")
-
     password = Entry(page)
     password.grid(column = 1, row = 1, sticky="ew")
 
-    #Create submission button
-    button = Button(page, text ="Login", bg ="white", command = lambda : connect(email.get(), password.get()))
-    button.grid(column = 1, row = 2, sticky="w")
+    #Create first name
+    first_name_label = Label(page, text ="First name: ")
+    first_name_label.grid(column = 2, row = 0, sticky="ew")
+    first_name = Entry(page)
+    first_name.grid(column = 3, row = 0, columnspan=200, sticky="ew")
 
-    # Create account creation button
-    createButton = Button(page, text="Create", bg="white", command=lambda:create(email.get(), password.get()))
-    createButton.grid(column = 1, row = 2, sticky="e")
+    #Create middle name
+    middle_name_label = Label(page, text ="Middle name: ")
+    middle_name_label.grid(column = 2, row = 1, sticky="ew")
+    middle_name = Entry(page)
+    middle_name.grid(column = 3, row = 1, columnspan=200, sticky="ew")
+
+    #Create last name
+    last_name_label = Label(page, text ="Middle name: ")
+    last_name_label.grid(column = 2, row = 2, sticky="ew")
+    last_name = Entry(page)
+    last_name.grid(column = 3, row = 2, columnspan=200, sticky="ew")
+
+    #Create label that displays errors
+    error_label = Label(page, text = "")
+    error_label.grid(column = 0, row = 4, sticky="ew")
+
+    #Create login button
+    button = Button(page, text ="Login", bg ="white", command = lambda : set_error_label(error_label, login(email.get(), password.get())))
+    button.grid(column = 1, row = 3, sticky="w")
+
+    #Create account creation button
+    createButton = Button(page, text="Create", bg="white", command=lambda: set_error_label(error_label, create(first_name.get(), middle_name.get(), last_name.get(), email.get(), password.get())))
+    createButton.grid(column = 3, row = 3, sticky="w")
     
-    #Create label that displays login errors
 
 def user_page(root):
     global db
@@ -83,6 +160,9 @@ def change_page(page):
     for widget in root.winfo_children():
         widget.destroy()
     page(root)
+
+#Create global email variable
+current_email = ""
 
 #Create global database variable and connect
 db = mysql.connector.connect(
