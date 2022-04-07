@@ -128,7 +128,7 @@ def login_page(root):
     createButton = Button(page, text="Create", bg="white", command=lambda: set_error_label(error_label, create(first_name.get(), middle_name.get(), last_name.get(), email.get(), password.get())))
     createButton.grid(column = 3, row = 3, sticky="w")
 
-def create_food_record(date, time, duration, type, foodList):
+def create_food_record(date, time, duration, mealType, foodList):
     global db
     # Submit SQL command to add this food record
     cursor = db.cursor()
@@ -181,15 +181,15 @@ def user_page(root):
     # Create food intake record
     createLabel = Label(page, bg="white", text="Create Food Intake Record")
     createLabel.grid(row=2, column=0, sticky="w")
-    dateLabel = Label(page, text="Date:")
+    dateLabel = Label(page, text="Date (DD/MM/YYYY): ")
     dateLabel.grid(row=3, column=0, sticky="w")
     date = Entry(page)
     date.grid(row=3, column=1, sticky="w")
-    timeLabel = Label(page,  text="Time:")
+    timeLabel = Label(page,  text="Time (HH/MM/SS):")
     timeLabel.grid(row=4, column=0, sticky="w")
     time = Entry(page)
     time.grid(row=4, column=1, sticky="w")
-    durationLabel = Label(page, text="Duration:")
+    durationLabel = Label(page, text="Duration (Minutes):")
     durationLabel.grid(row=5, column=0, sticky="w")
     duration = Entry(page)
     duration.grid(row=5, column=1, sticky="w")
@@ -200,7 +200,7 @@ def user_page(root):
     typeOptions.set(mealTypes[3])
     typeMenu = OptionMenu(page, typeOptions, *mealTypes)
     typeMenu.grid(row=6, column=1, sticky="w")
-    foodsLabel = Label(page, text="Foods:")
+    foodsLabel = Label(page, text="Foods (comma list):")
     foodsLabel.grid(row=7, column=0, sticky="w")
     foods = Entry(page)
     foods.grid(row=7, column=1, sticky="w")
