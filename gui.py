@@ -12,9 +12,10 @@ def connect(email, password):
 
     #Check if email and password exists
     #If not throw exception
+    mysql.connector
 
     #Change scene to user page
-    #This will only run if there are no exceptions 
+    #This will only run if there are no exceptions
     change_page(user_page)
 
 def login_page(root):
@@ -24,16 +25,16 @@ def login_page(root):
     #Create Email and Password labels
     email_label = Label(page, text ="Email: ")
     email_label.grid(column = 0, row = 0, sticky="ew")
-    
+
     email = Entry(page)
     email.grid(column = 1, row = 0, sticky="ew")
-    
+
     password_label = Label(page, text ="Password: ")
     password_label.grid(column = 0, row = 1, sticky="ew")
-    
+
     password = Entry(page)
     password.grid(column = 1, row = 1, sticky="ew")
-    
+
     #Create submission button
     button = Button(page, text ="Login", bg ="white", command = lambda : connect(email.get(), password.get()))
     button.grid(column = 1, row = 2, sticky="ew")
@@ -44,14 +45,14 @@ def user_page(root):
     global db
     page = Frame(root)
     page.grid()
-    
+
     cursor = db.cursor()
 
     #maybe create different pages for these sections / users
 
     #user:
     #Create normal food intake record
-    
+
     #View normal food intake record
 
 
@@ -61,7 +62,7 @@ def user_page(root):
     #View premium food intake record
 
     #Create goal
-    
+
     #View goal
 
     #Create goal analysis
@@ -85,6 +86,6 @@ root.config(bg = "gray")
 
 #Go to login page
 login_page(root)
- 
+
 #Start main loop
 root.mainloop()
