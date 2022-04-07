@@ -4,6 +4,7 @@ from datetime import date, datetime, timedelta
 
 def login(email, password):
     global db, userEmail
+    userEmail = ""
     cursor = db.cursor()
 
     #Get password
@@ -47,7 +48,7 @@ def create(first_name, middle_name, last_name, email, password):
     #Check if email is valid
     if len(email) == 0:
         return "Invalid email"
-        
+
     #Check if password is valid
     if len(password) == 0 or len(password) > 256:
         return "Invalid password"
@@ -81,7 +82,7 @@ def set_error_label(label, result):
     #Otherwise it will throw errors if the label is changed after the page is changes
     if (result != "Success"):
         label.configure(text=result)
-    
+
 def login_page(root):
     page = Frame(root)
     page.grid()
@@ -127,31 +128,28 @@ def login_page(root):
     createButton = Button(page, text="Create", bg="white", command=lambda: set_error_label(error_label, create(first_name.get(), middle_name.get(), last_name.get(), email.get(), password.get())))
     createButton.grid(column = 3, row = 3, sticky="w")
 
-def create_page(root):
-    global db
-    page = Frame(root)
-    page.grid()
-
-    cursor = db.cursor()
-
-    # Add name boxes
-    # Email box
-    # Password box
-    # OK / cancel buttons
-
-
 def create_food_record(time, duration, type, foodList):
     global db
     # Submit SQL command to add this food record
     cursor = db.cursor()
+
+    sql = "INSERT INTO food_records (owner_email, date, start_time, duration, meal_type, foods) VALUES ()"
+    values = ()
+    cursor.execute(sql, values)
+    db.commit()
 
 def get_food_records():
     global db
     cursor = db.cursor()
 
     # Submit SQL command to get food records for signed in email.
+    recordsList = []
+    cursor.execute("SELECT * FROM food_records WHERE owner_email = %s", (userEmail,))
+    result = cursor.fetchone()
+    while result != None:
+        recordsList.append(result)
+        result = cursor.fetchone()
 
-    recordsList = ["test1", "test2"]
     return recordsList
 
 def user_page(root):
