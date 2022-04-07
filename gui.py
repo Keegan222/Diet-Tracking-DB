@@ -128,7 +128,7 @@ def login_page(root):
     createButton = Button(page, text="Create", bg="white", command=lambda: set_error_label(error_label, create(first_name.get(), middle_name.get(), last_name.get(), email.get(), password.get())))
     createButton.grid(column = 3, row = 3, sticky="w")
 
-def create_food_record(time, duration, type, foodList):
+def create_food_record(date, time, duration, type, foodList):
     global db
     # Submit SQL command to add this food record
     cursor = db.cursor()
@@ -204,7 +204,7 @@ def user_page(root):
     foodsLabel.grid(row=7, column=0, sticky="w")
     foods = Entry(page)
     foods.grid(row=7, column=1, sticky="w")
-    createButton = Button(page, text="Create", command=lambda:create_food_record(time.get(), duration.get(), typeOptions.get(), foods.get()))
+    createButton = Button(page, text="Create", command=lambda:create_food_record(date.get(), time.get(), duration.get(), typeOptions.get(), foods.get()))
     createButton.grid(row=2, column=1, sticky="w")
 
     #if premium user:
