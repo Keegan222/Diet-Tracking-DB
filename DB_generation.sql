@@ -56,7 +56,7 @@ CREATE TABLE `food_records` (
 
 --
 -- Table structure for table `goal_analysis`
---
+	--
 
 CREATE TABLE `goal_analysis` (
   `record_id` int NOT NULL,

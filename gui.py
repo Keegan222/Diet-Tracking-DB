@@ -133,8 +133,8 @@ def create_food_record(date, time, duration, mealType, foodList):
     # Submit SQL command to add this food record
     cursor = db.cursor()
 
-    sql = "INSERT INTO food_records (owner_email, date, start_time, duration, meal_type, foods) VALUES ()"
-    values = ()
+    sql = "INSERT INTO food_records (owner_email, date, start_time, duration, meal_type, foods) VALUES (%s, %s, %s, %s, %s, %s)"
+    values = (userEmail, date, time, duration, mealType, foodList)
     cursor.execute(sql, values)
     db.commit()
 
@@ -181,11 +181,11 @@ def user_page(root):
     # Create food intake record
     createLabel = Label(page, bg="white", text="Create Food Intake Record")
     createLabel.grid(row=2, column=0, sticky="w")
-    dateLabel = Label(page, text="Date (DD/MM/YYYY): ")
+    dateLabel = Label(page, text="Date (YYYY/MM/DD): ")
     dateLabel.grid(row=3, column=0, sticky="w")
     date = Entry(page)
     date.grid(row=3, column=1, sticky="w")
-    timeLabel = Label(page,  text="Time (HH/MM/SS):")
+    timeLabel = Label(page,  text="Time (HH:MM:SS):")
     timeLabel.grid(row=4, column=0, sticky="w")
     time = Entry(page)
     time.grid(row=4, column=1, sticky="w")
