@@ -4,18 +4,23 @@ from tkinter import *
 def connect(email, password):
     global db
 
-    db = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "rootpass",
-        db = "comp_3753")
-
     #Check if email and password exists
     #If not throw exception
-    mysql.connector
 
     #Change scene to user page
     #This will only run if there are no exceptions
+    change_page(user_page)
+
+def create(email, password):
+    global db
+
+    # Check if the account already exists
+    # If it does throw exception
+
+    # Add row to the DB
+    # Sign new user in automatically
+
+    # Change scene to user page
     change_page(user_page)
 
 def login_page(root):
@@ -27,7 +32,7 @@ def login_page(root):
     email_label.grid(column = 0, row = 0, sticky="ew")
 
     email = Entry(page)
-    email.grid(column = 1, row = 0, sticky="ew")
+    email.grid(column = 1, row = 0, columnspan=200, sticky="ew")
 
     password_label = Label(page, text ="Password: ")
     password_label.grid(column = 0, row = 1, sticky="ew")
@@ -37,8 +42,12 @@ def login_page(root):
 
     #Create submission button
     button = Button(page, text ="Login", bg ="white", command = lambda : connect(email.get(), password.get()))
-    button.grid(column = 1, row = 2, sticky="ew")
+    button.grid(column = 1, row = 2, sticky="w")
 
+    # Create account creation button
+    createButton = Button(page, text="Create", bg="white", command=lambda:create(email.get(), password.get()))
+    createButton.grid(column = 1, row = 2, sticky="e")
+    
     #Create label that displays login errors
 
 def user_page(root):
@@ -75,8 +84,12 @@ def change_page(page):
         widget.destroy()
     page(root)
 
-#Create global database variable
-db = 0
+#Create global database variable and connect
+db = mysql.connector.connect(
+    host = "localhost",
+    user = "root",
+    password = "rootpass",
+    db = "comp_3753")
 
 #Create GUI
 root = Tk()
