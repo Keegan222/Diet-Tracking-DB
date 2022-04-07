@@ -109,13 +109,17 @@ def user_page(root):
     duration.grid(row=4, column=1, sticky="w")
     typeLabel = Label(page, text="Meal:")
     typeLabel.grid(row=5, column=0, sticky="w")
-    typeMenu = OptionMenu(page, StringVar(page, "Other"), "Breakfast", "Lunch", "Dinner", "Other")
+    mealTypes = ["Breakfast", "Lunch", "Dinner", "Other"]
+    typeOptions = StringVar()
+    typeOptions.set(mealTypes[3])
+    typeMenu = OptionMenu(page, typeOptions, *mealTypes)
     typeMenu.grid(row=5, column=1, sticky="w")
     foodsLabel = Label(page, text="Foods:")
     foodsLabel.grid(row=6, column=0, sticky="w")
     foods = Entry(page)
     foods.grid(row=6, column=1, sticky="w")
-    createButton = Button(page, text="Create", command=lambda:create_food_record(time.get(), duration.get(), typeMenu.get(), foodList.get()))
+    createButton = Button(page, text="Create", command=lambda:create_food_record(time.get(), duration.get(), typeOptions.get(), foods.get()))
+    createButton.grid(row=2, column=1, sticky="w")
 
     #if premium user:
     #Create premium food intake record
