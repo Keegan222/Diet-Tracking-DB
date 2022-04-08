@@ -201,12 +201,41 @@ def user_page(root):
     typeOptions.set(mealTypes[3])
     typeMenu = OptionMenu(page, typeOptions, *mealTypes)
     typeMenu.grid(row=6, column=1, sticky="w")
-    foodsLabel = Label(page, text="Foods (comma list):")
-    foodsLabel.grid(row=7, column=0, sticky="w")
-    foods = Entry(page)
-    foods.grid(row=7, column=1, sticky="w")
+
     createButton = Button(page, text="Create", command=lambda:create_food_record(date.get(), time.get(), duration.get(), typeOptions.get(), foods.get(), foodList))
     createButton.grid(row=2, column=1, sticky="w")
+
+    #Create food record
+    foodLabel = Label(page, bg="white", text="Add Food Record")
+    foodLabel.grid(row=7, column=0, sticky="w")
+
+    foodNameLabel = Label(page, text="Food Name:")
+    foodNameLabel.grid(row=8, column=0, sticky="w")    
+    foodName = Entry(page)
+    foodName.grid(row=8, column=1, sticky="w")
+
+    foodCategoryLabel = Label(page, text="Food Category:")
+    foodCategoryLabel.grid(row=9, column=0, sticky="w")
+    foodCategories = ["Vegetables and Fruit", "Grain Products", "Milk Products", "Meat and Alternatives", "Fats, Oils, and Sweets"]
+    foodOptions = StringVar()
+    foodOptions.set(foodCategories[4])
+    foodMenu = OptionMenu(page, foodOptions, *foodCategories)
+    foodMenu.grid(row=9, column=1, sticky="w")
+
+    caloriesLabel = Label(page, text="Calories (g):")
+    caloriesLabel.grid(row=10, column=0, sticky="w")
+    calories = Entry(page)
+    calories.grid(row=10, column=1, sticky="w")
+
+    sugarsLabel = Label(page, text="Sugars (g):")
+    sugarsLabel.grid(row=11, column=0, sticky="w")
+    sugars = Entry(page)
+    sugars.grid(row=11, column=1, sticky="w")
+
+    fatsLabel = Label(page, text="Fats (g):")
+    fatsLabel.grid(row=12, column=0, sticky="w")
+    fats = Entry(page)
+    fats.grid(row=12, column=1, sticky="w")
 
     #if premium user:
     #Create premium food intake record
@@ -223,7 +252,7 @@ def user_page(root):
 
     # Sign out of account
     signOutButton = Button(page, text="Sign Out", bg="white", command=lambda:change_page(login_page))
-    signOutButton.grid(row=8, column=0, sticky="w")
+    signOutButton.grid(row=14, column=0, sticky="w")
 
 def change_page(page):
     global root
