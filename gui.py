@@ -128,7 +128,7 @@ def login_page(root):
     createButton = Button(page, text="Create", bg="white", command=lambda: set_error_label(error_label, create(first_name.get(), middle_name.get(), last_name.get(), email.get(), password.get())))
     createButton.grid(column = 3, row = 3, sticky="w")
 
-def create_food_record(date, time, duration, mealType, foodList):
+def create_food_record(date, time, duration, mealType, foodList, listBox):
     global db
     # Submit SQL command to add this food record
     cursor = db.cursor()
@@ -138,9 +138,13 @@ def create_food_record(date, time, duration, mealType, foodList):
     cursor.execute(sql, values)
     db.commit()
 
-def get_food_records():
+    get_food_records(listBox)
+
+def get_food_records(foodList):
     global db
     cursor = db.cursor()
+
+    foodList.delete(0, END)
 
     # Submit SQL command to get food records for signed in email.
     recordsList = []
@@ -150,7 +154,10 @@ def get_food_records():
         recordsList.append(result)
         result = cursor.fetchone()
 
-    return recordsList
+    i = 1
+    for record in recordsList:
+        foodList.insert(i, record)
+        i += 1
 
 def user_page(root):
     global db
@@ -166,17 +173,11 @@ def user_page(root):
     #View normal food intake record
     foodListLabel = Label(page, text="Food Intake Records")
     foodListLabel.grid(row=0, column=0, sticky="ew")
-    refreshButton = Button(page, text="Refresh", command=lambda:get_food_records())
-    refreshButton.grid(row=0, column=1, stick="w")
     foodList = Listbox(page, bg="white")
     foodList.grid(row=1, column=0, columnspan=2, sticky="ew")
 
     # Refresh once initially
-    recordList = get_food_records()
-    i = 1
-    for record in recordList:
-        foodList.insert(i, record)
-        i += 1
+    get_food_records(foodList)
 
     # Create food intake record
     createLabel = Label(page, bg="white", text="Create Food Intake Record")
@@ -204,7 +205,7 @@ def user_page(root):
     foodsLabel.grid(row=7, column=0, sticky="w")
     foods = Entry(page)
     foods.grid(row=7, column=1, sticky="w")
-    createButton = Button(page, text="Create", command=lambda:create_food_record(date.get(), time.get(), duration.get(), typeOptions.get(), foods.get()))
+    createButton = Button(page, text="Create", command=lambda:create_food_record(date.get(), time.get(), duration.get(), typeOptions.get(), foods.get(), foodList))
     createButton.grid(row=2, column=1, sticky="w")
 
     #if premium user:
