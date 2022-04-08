@@ -128,17 +128,30 @@ def login_page(root):
     createButton = Button(page, text="Create", bg="white", command=lambda: set_error_label(error_label, create(first_name.get(), middle_name.get(), last_name.get(), email.get(), password.get())))
     createButton.grid(column = 3, row = 3, sticky="w")
 
-def create_food(food_name, food_category, calories, sugars, fats):
-    pass
-    
-
-def create_food_record(date, time, duration, mealType, foodList, listBox):
+def create_food(food_name, food_category, calories, sugars, fats, food_ids):
     global db
-    # Submit SQL command to add this food record
     cursor = db.cursor()
 
-    sql = "INSERT INTO food_records (owner_email, date, start_time, duration, meal_type, foods) VALUES (%s, %s, %s, %s, %s, %s)"
-    values = (userEmail, date, time, duration, mealType, foodList)
+    # Submit SQL command to add this food
+    sql = "INSERT INTO food (food_name, food_category, calories, sugars, fats) VALUES (%s, %s, %s, %s, %s)"
+    values = (food_name, food_category, calories, sugars, fats)
+    cursor.execute(sql, values)
+    db.commit()
+
+    #Get the food id and add to list
+    cursor.execute("SELECT @@identity")
+    food_ids.append(cursor.fetchone()[0])
+
+def create_food_record(date, time, duration, mealType, foodIds, listBox):
+    global db
+    cursor = db.cursor()
+
+    # Convert food id list to comma seperated list
+    id_list = ",".join(map(str, foodIds))
+
+    # Submit SQL command to add this food record
+    sql = "INSERT INTO food_records (owner_email, date, start_time, duration, meal_type, food_ids) VALUES (%s, %s, %s, %s, %s, %s)"
+    values = (userEmail, date, time, duration, mealType, id_list)
     cursor.execute(sql, values)
     db.commit()
 
@@ -182,6 +195,9 @@ def user_page(root):
 
     # Refresh once initially
     get_food_records(foodList)
+
+    #Create food id list
+    foodIds = []
 
     # Create food intake record
     createLabel = Label(page, bg="white", text="Create Food Intake Record")
@@ -240,8 +256,10 @@ def user_page(root):
     fats = Entry(page)
     fats.grid(row=13, column=1, sticky="w")
 
-    foodButton = Button(page, text="Add Food Record", command=lambda:create_food(foodName.get(), foodOptions.get(), calories.get(), sugars.get(), fats.get()))
+    foodButton = Button(page, text="Add Food Record", command=lambda:create_food(foodName.get(), foodOptions.get(), calories.get(), sugars.get(), fats.get(), foodIds))
     foodButton.grid(row=14, column=1, sticky="w")
+
+
 
     #if premium user:
     #Create premium food intake record
