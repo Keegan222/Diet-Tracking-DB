@@ -128,6 +128,10 @@ def login_page(root):
     createButton = Button(page, text="Create", bg="white", command=lambda: set_error_label(error_label, create(first_name.get(), middle_name.get(), last_name.get(), email.get(), password.get())))
     createButton.grid(column = 3, row = 3, sticky="w")
 
+def create_food(food_name, food_category, calories, sugars, fats):
+    pass
+    
+
 def create_food_record(date, time, duration, mealType, foodList, listBox):
     global db
     # Submit SQL command to add this food record
@@ -201,41 +205,43 @@ def user_page(root):
     typeOptions.set(mealTypes[3])
     typeMenu = OptionMenu(page, typeOptions, *mealTypes)
     typeMenu.grid(row=6, column=1, sticky="w")
-
-    createButton = Button(page, text="Create", command=lambda:create_food_record(date.get(), time.get(), duration.get(), typeOptions.get(), foods.get(), foodList))
-    createButton.grid(row=2, column=1, sticky="w")
+    intakeButton = Button(page, text="Create Food Intake Record", command=lambda:create_food_record(date.get(), time.get(), duration.get(), typeOptions.get(), foodIds, foodList))
+    intakeButton.grid(row=7, column=1, sticky="w")
 
     #Create food record
     foodLabel = Label(page, bg="white", text="Add Food Record")
-    foodLabel.grid(row=7, column=0, sticky="w")
+    foodLabel.grid(row=8, column=0, sticky="w")
 
     foodNameLabel = Label(page, text="Food Name:")
-    foodNameLabel.grid(row=8, column=0, sticky="w")    
+    foodNameLabel.grid(row=9, column=0, sticky="w")    
     foodName = Entry(page)
-    foodName.grid(row=8, column=1, sticky="w")
+    foodName.grid(row=9, column=1, sticky="w")
 
     foodCategoryLabel = Label(page, text="Food Category:")
-    foodCategoryLabel.grid(row=9, column=0, sticky="w")
+    foodCategoryLabel.grid(row=10, column=0, sticky="w")
     foodCategories = ["Vegetables and Fruit", "Grain Products", "Milk Products", "Meat and Alternatives", "Fats, Oils, and Sweets"]
     foodOptions = StringVar()
     foodOptions.set(foodCategories[4])
     foodMenu = OptionMenu(page, foodOptions, *foodCategories)
-    foodMenu.grid(row=9, column=1, sticky="w")
+    foodMenu.grid(row=10, column=1, sticky="w")
 
     caloriesLabel = Label(page, text="Calories (g):")
-    caloriesLabel.grid(row=10, column=0, sticky="w")
+    caloriesLabel.grid(row=11, column=0, sticky="w")
     calories = Entry(page)
-    calories.grid(row=10, column=1, sticky="w")
+    calories.grid(row=11, column=1, sticky="w")
 
     sugarsLabel = Label(page, text="Sugars (g):")
-    sugarsLabel.grid(row=11, column=0, sticky="w")
+    sugarsLabel.grid(row=12, column=0, sticky="w")
     sugars = Entry(page)
-    sugars.grid(row=11, column=1, sticky="w")
+    sugars.grid(row=12, column=1, sticky="w")
 
     fatsLabel = Label(page, text="Fats (g):")
-    fatsLabel.grid(row=12, column=0, sticky="w")
+    fatsLabel.grid(row=13, column=0, sticky="w")
     fats = Entry(page)
-    fats.grid(row=12, column=1, sticky="w")
+    fats.grid(row=13, column=1, sticky="w")
+
+    foodButton = Button(page, text="Add Food Record", command=lambda:create_food(foodName.get(), foodOptions.get(), calories.get(), sugars.get(), fats.get()))
+    foodButton.grid(row=14, column=1, sticky="w")
 
     #if premium user:
     #Create premium food intake record
@@ -252,7 +258,7 @@ def user_page(root):
 
     # Sign out of account
     signOutButton = Button(page, text="Sign Out", bg="white", command=lambda:change_page(login_page))
-    signOutButton.grid(row=14, column=0, sticky="w")
+    signOutButton.grid(row=15, column=0, sticky="w")
 
 def change_page(page):
     global root
@@ -273,7 +279,7 @@ userEmail = ""
 #Create GUI
 root = Tk()
 root.title("Diet Tracking Database")
-root.geometry("720x480")
+root.geometry("720x520")
 root.config(bg = "gray")
 
 #Go to login page
