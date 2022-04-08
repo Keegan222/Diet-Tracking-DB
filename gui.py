@@ -173,7 +173,7 @@ def user_page(root):
     #View normal food intake record
     foodListLabel = Label(page, text="Food Intake Records")
     foodListLabel.grid(row=0, column=0, sticky="ew")
-    foodList = Listbox(page, bg="white")
+    foodList = Listbox(page, width=150, bg="white")
     foodList.grid(row=1, column=0, columnspan=2, sticky="ew")
 
     # Refresh once initially
