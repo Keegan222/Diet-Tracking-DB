@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 06, 2022 at 07:55 PM
+-- Generation Time: Apr 07, 2022 at 11:49 PM
 -- Server version: 8.0.28
 -- PHP Version: 7.4.28
 
@@ -45,8 +45,8 @@ CREATE TABLE `food_analysis` (
 CREATE TABLE `food_records` (
   `id_number` int NOT NULL,
   `owner_email` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
-  `date` timestamp NOT NULL,
-  `start_time` timestamp NOT NULL,
+  `date` date NOT NULL,
+  `start_time` time NOT NULL,
   `duration` double NOT NULL,
   `meal_type` enum('Breakfast','Lunch','Dinner','Snack','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `foods` text COLLATE utf8mb4_general_ci NOT NULL
@@ -56,7 +56,7 @@ CREATE TABLE `food_records` (
 
 --
 -- Table structure for table `goal_analysis`
-	--
+--
 
 CREATE TABLE `goal_analysis` (
   `record_id` int NOT NULL,
@@ -118,8 +118,7 @@ ALTER TABLE `food_analysis`
 -- Indexes for table `food_records`
 --
 ALTER TABLE `food_records`
-  ADD PRIMARY KEY (`id_number`),
-  ADD UNIQUE KEY `owner_email` (`owner_email`);
+  ADD PRIMARY KEY (`id_number`);
 
 --
 -- Indexes for table `goal_analysis`
@@ -131,8 +130,7 @@ ALTER TABLE `goal_analysis`
 -- Indexes for table `goal_records`
 --
 ALTER TABLE `goal_records`
-  ADD PRIMARY KEY (`id_number`),
-  ADD UNIQUE KEY `owner_email` (`owner_email`);
+  ADD PRIMARY KEY (`id_number`);
 
 --
 -- Indexes for table `user_data`
