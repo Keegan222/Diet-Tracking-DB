@@ -31,10 +31,25 @@ CREATE TABLE `food_analysis` (
   `record_id` int NOT NULL,
   `calories` int NOT NULL,
   `fats` int NOT NULL,
-  `sugars` int NOT NULL,
-  `vitamins` int NOT NULL,
-  `minerals` int NOT NULL
+  `sugars` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `food`
+--
+
+
+CREATE TABLE `food` (
+  `id_number` int NOT NULL,
+  `food_name` text COLLATE utf8mb4_general_ci NOT NULL,
+  `food_category` enum('Vegetables and Fruit','Grain Products','Milk Products','Meat and Alternatives','Fats, Oils, and Sweets') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `calories` int NOT NULL,
+  `sugars` int NOT NULL,
+  `fats` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 -- --------------------------------------------------------
 
@@ -49,7 +64,7 @@ CREATE TABLE `food_records` (
   `start_time` time NOT NULL,
   `duration` double NOT NULL,
   `meal_type` enum('Breakfast','Lunch','Dinner','Snack','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `foods` text COLLATE utf8mb4_general_ci NOT NULL
+  `food_ids` text COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -83,7 +98,7 @@ CREATE TABLE `goal_records` (
   `start_date` timestamp NOT NULL,
   `end_date` timestamp NOT NULL,
   `goal_type` enum('Total amount of a nutrition type under a value','Total amount of a nutrition type over a value','Total amount of a nutrition type within a range','Total occurrences of a food category in meals over a certain value','Total occurrences of a food category in meals under a certain value','Total occurrences of a food category in meals within a range') COLLATE utf8mb4_general_ci NOT NULL,
-  `nutrition_category` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
+  `nutrition_category` enum('Vegetables and Fruit','Grain Products','Milk Products','Meat and Alternatives','Fats, Oils, and Sweets','Calories','Sugars','Fats') COLLATE utf8mb4_general_ci NOT NULL,
   `lower_bound` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
   `upper_bound` varchar(256) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -115,6 +130,12 @@ ALTER TABLE `food_analysis`
   ADD UNIQUE KEY `record_id` (`record_id`);
 
 --
+-- Indexes for table `food`
+--
+ALTER TABLE `food`
+  ADD PRIMARY KEY (`id_number`);
+
+--
 -- Indexes for table `food_records`
 --
 ALTER TABLE `food_records`
@@ -141,6 +162,12 @@ ALTER TABLE `user_data`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `foods`
+--
+ALTER TABLE `food`
+  MODIFY `id_number` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `food_records`
