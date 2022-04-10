@@ -178,8 +178,14 @@ def get_food_records(foodList):
         foodList.insert(i, record)
         i += 1
 
+def toggle_premium():
+    global premium
+    premium = not premium
+    change_page(user_page)
+    
+
 def user_page(root):
-    global db
+    global db, premium
     page = Frame(root)
     page.grid()
 
@@ -261,13 +267,24 @@ def user_page(root):
     foodButton = Button(page, text="Add Food Record", command=lambda:create_food(foodName.get(), foodOptions.get(), calories.get(), sugars.get(), fats.get(), foodIds))
     foodButton.grid(row=14, column=1, sticky="w")
 
+    #if premium user enable goal button
+    if premium:
+        print("ran")
+        signOutButton = Button(page, text="Goals", bg="white", command=lambda:change_page(goal_page))
+        signOutButton.grid(row=16, column=0, sticky="w")
 
+    # Sign out of account
+    signOutButton = Button(page, text="Sign Out", bg="white", command=lambda:change_page(login_page))
+    signOutButton.grid(row=17, column=0, sticky="w")
 
-    #if premium user:
-    #Create premium food intake record
+    #Create toggle premium button
+    premiumButton = Button(page, text="Toggle Premium", bg="white", command=lambda:toggle_premium())
+    premiumButton.grid(row=15, column=0, sticky="w")
 
-    #View premium food intake record
-
+def goal_page(root):
+    page = Frame(root)
+    page.grid()
+    
     #Create goal
 
     #View goal
@@ -276,9 +293,6 @@ def user_page(root):
 
     #View goal analysis
 
-    # Sign out of account
-    signOutButton = Button(page, text="Sign Out", bg="white", command=lambda:change_page(login_page))
-    signOutButton.grid(row=15, column=0, sticky="w")
 
 def change_page(page):
     global root
@@ -293,13 +307,14 @@ db = mysql.connector.connect(
     password = "rootpass",
     db = "comp_3753")
 
-# Declare signed in user's email
+# Declare signed in user's email and premium status
 userEmail = ""
+premium = False
 
 #Create GUI
 root = Tk()
 root.title("Diet Tracking Database")
-root.geometry("720x520")
+root.geometry("720x565")
 root.config(bg = "gray")
 
 #Go to login page
