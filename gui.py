@@ -286,6 +286,47 @@ def goal_page(root):
     page.grid()
     
     #Create goal
+    goalLabel = Label(page, bg="white", text="Create Goal")
+    goalLabel.grid(row=2, column=0, sticky="w")
+
+    dateStartLabel = Label(page, text="Start Date (YYYY/MM/DD): ")
+    dateStartLabel.grid(row=3, column=0, sticky="w")
+    dateStart = Entry(page)
+    dateStart.grid(row=3, column=1, sticky="w")
+
+    dateEndLabel = Label(page, text="End Date (YYYY/MM/DD): ")
+    dateEndLabel.grid(row=4, column=0, sticky="w")
+    dateEnd = Entry(page)
+    dateEnd.grid(row=4, column=1, sticky="w")
+
+    goalTypeLabel = Label(page, text="Goal Type:")
+    goalTypeLabel.grid(row=5, column=0, sticky="w")
+    goalCategories = ['Total amount of a nutrition type under a value','Total amount of a nutrition type over a value','Total amount of a nutrition type within a range','Total occurrences of a food category in meals over a certain value','Total occurrences of a food category in meals under a certain value','Total occurrences of a food category in meals within a range']
+    goalOptions = StringVar()
+    goalOptions.set(goalCategories[5])
+    goalMenu = OptionMenu(page, goalOptions, *goalCategories)
+    goalMenu.grid(row=5, column=1, sticky="w")
+
+    categoryLabel = Label(page, text="Goal Category:")
+    categoryLabel.grid(row=6, column=0, sticky="w")
+    categoryCategories = ['Vegetables and Fruit','Grain Products','Milk Products','Meat and Alternatives','Fats, Oils, and Sweets','Calories','Sugars','Fats']
+    categoryOptions = StringVar()
+    categoryOptions.set(categoryCategories[7])
+    categoryMenu = OptionMenu(page, categoryOptions, *categoryCategories)
+    categoryMenu.grid(row=6, column=1, sticky="w")
+
+    lowerLabel = Label(page, bg="white", text="Lower Value:")
+    lowerLabel.grid(row=7, column=0, sticky="w")
+    lower = Entry(page)
+    lower.grid(row=7, column=1, sticky="w")
+
+    upperLabel = Label(page, bg="white", text="Upper Value:")
+    upperLabel.grid(row=8, column=0, sticky="w")
+    upper = Entry(page)
+    upper.grid(row=8, column=1, sticky="w")
+
+    
+    
 
     #View goal
 
