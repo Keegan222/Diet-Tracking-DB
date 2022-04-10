@@ -155,6 +155,8 @@ def create_food_record(date, time, duration, mealType, foodIds, listBox):
     cursor.execute(sql, values)
     db.commit()
 
+    # Reset food ids and update records
+    foodIds.clear()
     get_food_records(listBox)
 
 def get_food_records(foodList):
