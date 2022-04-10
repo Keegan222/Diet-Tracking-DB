@@ -29,7 +29,7 @@ def login(email, password):
 
     return "Success"
 
-def create(first_name, middle_name, last_name, email, password):
+def create_account(first_name, middle_name, last_name, email, password):
     global db, userEmail
     cursor = db.cursor()
 
@@ -125,7 +125,7 @@ def login_page(root):
     button.grid(column = 1, row = 3, sticky="w")
 
     #Create account creation button
-    createButton = Button(page, text="Create", bg="white", command=lambda: set_error_label(error_label, create(first_name.get(), middle_name.get(), last_name.get(), email.get(), password.get())))
+    createButton = Button(page, text="Create", bg="white", command=lambda: set_error_label(error_label, create_account(first_name.get(), middle_name.get(), last_name.get(), email.get(), password.get())))
     createButton.grid(column = 3, row = 3, sticky="w")
 
 def create_food(food_name, food_category, calories, sugars, fats, food_ids):
