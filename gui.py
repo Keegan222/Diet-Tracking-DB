@@ -281,7 +281,7 @@ def user_page(root):
     premiumButton = Button(page, text="Toggle Premium", bg="white", command=lambda:toggle_premium())
     premiumButton.grid(row=15, column=0, sticky="w")
 
-def create_goal(start_date, end_date, goal_type, nutrition_category, lower_bound, upper_bound):
+def create_goal(start_date, end_date, goal_type, nutrition_category, lower_bound, upper_bound, list_box):
     global db, userEmail
     cursor = db.cursor()
 
@@ -292,11 +292,39 @@ def create_goal(start_date, end_date, goal_type, nutrition_category, lower_bound
     db.commit()
 
     # Update goal records
-    # get_goal_records(listBox)
+    get_goal_records(list_box)
+
+def get_goal_records(goalList):
+    global db
+    cursor = db.cursor()
+
+    goalList.delete(0, END)
+
+    # Submit SQL command to get food records for signed in email.
+    recordsList = []
+    cursor.execute("SELECT * FROM goal_records WHERE owner_email = %s", (userEmail,))
+    result = cursor.fetchone()
+    while result != None:
+        recordsList.append(result)
+        result = cursor.fetchone()
+
+    i = 1
+    for record in recordsList:
+        goalList.insert(i, record)
+        i += 1
     
 def goal_page(root):
     page = Frame(root)
     page.grid()
+
+    #Create goal display
+    goalListLabel = Label(page, text="Goal Records")
+    goalListLabel.grid(row=0, column=0, sticky="ew")
+    goalList = Listbox(page, width=150, bg="white")
+    goalList.grid(row=1, column=0, columnspan=2, sticky="ew")
+
+    #Update list
+    get_goal_records(goalList)
     
     #Create goal
     goalLabel = Label(page, bg="white", text="Create Goal")
@@ -339,7 +367,7 @@ def goal_page(root):
     upper.grid(row=8, column=1, sticky="w")
 
     #Create goal button
-    goalButton = Button(page, text="Create Goal", bg="white", command=lambda:create_goal(dateStart.get(), dateEnd.get(), goalOptions.get(), categoryOptions.get(), lower.get(), upper.get()))
+    goalButton = Button(page, text="Create Goal", bg="white", command=lambda:create_goal(dateStart.get(), dateEnd.get(), goalOptions.get(), categoryOptions.get(), lower.get(), upper.get(), goalList))
     goalButton.grid(row=9, column=0, sticky="w")
 
     
