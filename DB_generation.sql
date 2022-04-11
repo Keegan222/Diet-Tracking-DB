@@ -95,12 +95,12 @@ CREATE TABLE `goal_analysis` (
 CREATE TABLE `goal_records` (
   `id_number` int NOT NULL,
   `owner_email` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
-  `start_date` timestamp NOT NULL,
-  `end_date` timestamp NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
   `goal_type` enum('Total amount of a nutrition type under a value','Total amount of a nutrition type over a value','Total amount of a nutrition type within a range','Total occurrences of a food category in meals over a certain value','Total occurrences of a food category in meals under a certain value','Total occurrences of a food category in meals within a range') COLLATE utf8mb4_general_ci NOT NULL,
   `nutrition_category` enum('Vegetables and Fruit','Grain Products','Milk Products','Meat and Alternatives','Fats, Oils, and Sweets','Calories','Sugars','Fats') COLLATE utf8mb4_general_ci NOT NULL,
-  `lower_bound` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
-  `upper_bound` varchar(256) COLLATE utf8mb4_general_ci NOT NULL
+  `lower_bound` int COLLATE utf8mb4_general_ci NOT NULL,
+  `upper_bound` int COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

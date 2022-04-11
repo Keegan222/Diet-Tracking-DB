@@ -281,6 +281,19 @@ def user_page(root):
     premiumButton = Button(page, text="Toggle Premium", bg="white", command=lambda:toggle_premium())
     premiumButton.grid(row=15, column=0, sticky="w")
 
+def create_goal(start_date, end_date, goal_type, nutrition_category, lower_bound, upper_bound):
+    global db, userEmail
+    cursor = db.cursor()
+
+    # Submit SQL command to add this goal record
+    sql = "INSERT INTO goal_records (owner_email, start_date, end_date, goal_type, nutrition_category, lower_bound, upper_bound) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    values = (userEmail, start_date, end_date, goal_type, nutrition_category, lower_bound, upper_bound)
+    cursor.execute(sql, values)
+    db.commit()
+
+    # Update goal records
+    # get_goal_records(listBox)
+    
 def goal_page(root):
     page = Frame(root)
     page.grid()
@@ -324,6 +337,10 @@ def goal_page(root):
     upperLabel.grid(row=8, column=0, sticky="w")
     upper = Entry(page)
     upper.grid(row=8, column=1, sticky="w")
+
+    #Create goal button
+    goalButton = Button(page, text="Create Goal", bg="white", command=lambda:create_goal(dateStart.get(), dateEnd.get(), goalOptions.get(), categoryOptions.get(), lower.get(), upper.get()))
+    goalButton.grid(row=9, column=0, sticky="w")
 
     
     
