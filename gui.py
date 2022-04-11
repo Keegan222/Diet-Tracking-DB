@@ -183,8 +183,13 @@ def toggle_premium():
     premium = not premium
     change_page(user_page)
 
-def analyze_food():
-    pass
+def analyze_food(food_list):
+    global db
+    cursor = db.cursor()
+    
+    #Get the id of the currently selected food recordd
+    record_id = food_list.get(food_list.curselection())[0]
+    
     
 
 def user_page(root):
@@ -276,7 +281,7 @@ def user_page(root):
         goalButton.grid(row=16, column=0, sticky="w")
 
         #Enable food analysis
-        analysisButton = Button(page, text="Analyze", bg="white", command=lambda:analyze_food())
+        analysisButton = Button(page, text="Analyze", bg="white", command=lambda:analyze_food(foodList))
         analysisButton.grid(row=16, column=1, sticky="w")
 
         
