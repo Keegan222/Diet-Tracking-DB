@@ -370,10 +370,9 @@ def goal_page(root):
     goalButton = Button(page, text="Create Goal", bg="white", command=lambda:create_goal(dateStart.get(), dateEnd.get(), goalOptions.get(), categoryOptions.get(), lower.get(), upper.get(), goalList))
     goalButton.grid(row=9, column=0, sticky="w")
 
-    
-    
-
-    #View goal
+    #Create back button
+    backButton = Button(page, text="Back", bg="white", command=lambda:change_page(user_page))
+    backButton.grid(row=10, column=0, sticky="w")
 
     #Create goal analysis
 
