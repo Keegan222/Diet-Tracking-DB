@@ -182,6 +182,9 @@ def toggle_premium():
     global premium
     premium = not premium
     change_page(user_page)
+
+def analyze_food():
+    pass
     
 
 def user_page(root):
@@ -267,11 +270,18 @@ def user_page(root):
     foodButton = Button(page, text="Add Food Record", command=lambda:create_food(foodName.get(), foodOptions.get(), calories.get(), sugars.get(), fats.get(), foodIds))
     foodButton.grid(row=14, column=1, sticky="w")
 
-    #if premium user enable goal button
     if premium:
-        print("ran")
-        signOutButton = Button(page, text="Goals", bg="white", command=lambda:change_page(goal_page))
-        signOutButton.grid(row=16, column=0, sticky="w")
+        # Enable goal button
+        goalButton = Button(page, text="Goals", bg="white", command=lambda:change_page(goal_page))
+        goalButton.grid(row=16, column=0, sticky="w")
+
+        #Enable food analysis
+        analysisButton = Button(page, text="Analyze", bg="white", command=lambda:analyze_food())
+        analysisButton.grid(row=16, column=1, sticky="w")
+
+        
+
+        
 
     # Sign out of account
     signOutButton = Button(page, text="Sign Out", bg="white", command=lambda:change_page(login_page))
