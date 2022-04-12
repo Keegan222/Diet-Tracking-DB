@@ -501,18 +501,18 @@ def analyze_goal(goal_list, analysis_label):
                     status = 'Finished'
             
             case 'Total amount of a nutrition type over a value':
-                if  lower_bound < dict_count(nutrition_dict, nutrition_category):
+                if lower_bound < dict_count(nutrition_dict, nutrition_category):
                     status = 'Finished'
 
             case 'Total amount of a nutrition type within a range':
                 if lower_bound < dict_count(nutrition_dict, nutrition_category) < upper_bound:
                     status = 'Finished'
 
-            case 'Total occurrences of a food category in meals over a certain value':
+            case 'Total occurrences of a food category in meals under a certain value':
                 if dict_count(category_dict, nutrition_category) < upper_bound:
                     status = 'Finished'
                 
-            case 'Total occurrences of a food category in meals under a certain value':
+            case 'Total occurrences of a food category in meals over a certain value':
                 if  lower_bound < dict_count(category_dict, nutrition_category):
                     status = 'Finished'
                 
