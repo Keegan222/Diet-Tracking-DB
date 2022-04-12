@@ -76,12 +76,12 @@ CREATE TABLE `food_records` (
 CREATE TABLE `goal_analysis` (
   `record_id` int NOT NULL,
   `food_category_variety` enum('Good','Medium','Poor') COLLATE utf8mb4_general_ci NOT NULL,
-  `average_breakfast_time` time NOT NULL,
-  `average_lunch_time` time NOT NULL,
-  `average_dinner_time` time NOT NULL,
-  `calories_per_day` int NOT NULL,
-  `fats_per_day` int NOT NULL,
-  `sugars_per_day` int NOT NULL,
+  `average_breakfast_time` float NOT NULL,
+  `average_lunch_time` float NOT NULL,
+  `average_dinner_time` float NOT NULL,
+  `calories_per_day` float NOT NULL,
+  `fats_per_day` float NOT NULL,
+  `sugars_per_day` float NOT NULL,
   `status` enum('In Progress','Finished','Failed') COLLATE utf8mb4_general_ci NOT NULL,
   `progression_percentage` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
