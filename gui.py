@@ -178,9 +178,23 @@ def get_food_records(foodList):
         foodList.insert(i, record)
         i += 1
 
+def is_premium():
+    global db, userEmail
+    cursor = db.cursor()
+    cursor.execute("SELECT premium FROM `user_data` WHERE `email_address` = %s", (userEmail,))
+    return cursor.fetchone()[0]
+
 def toggle_premium():
-    global premium
+    global db, premium, userEmail
+    cursor = db.cursor()
     premium = not premium
+
+    #Update database account
+    sql = "UPDATE user_data SET premium = %s WHERE email_address = %s"
+    values = (premium, userEmail)
+    cursor.execute(sql, values)
+    db.commit()
+
     change_page(user_page)
 
 def analyze_food(food_list, analysis_label):
@@ -194,7 +208,6 @@ def analyze_food(food_list, analysis_label):
     #If so, just display the record
     cursor.execute("SELECT calories, fats, sugars FROM food_analysis WHERE record_id = %s", (record_id,))
     if (result := cursor.fetchone()):
-        print(result)
         label_text = "Calories: " + str(result[0]) + "g Fats: " + str(result[1]) + "g Sugars: " + str(result[2]) + "g"
         analysis_label.config(text = label_text)
         return
@@ -231,6 +244,9 @@ def user_page(root):
     page.grid()
 
     cursor = db.cursor()
+
+    #Update premium status
+    premium = is_premium()
 
     #maybe create different pages for these sections / users
 
