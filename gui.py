@@ -380,6 +380,17 @@ def get_goal_records(goalList):
 def analyze_goal(goal_list, analysis_label):
     global db, userEmail
     cursor = db.cursor()
+
+    #Create analysis variables
+    category_variety = ""
+    avg_breakfast = 0
+    avg_lunch = 0
+    avg_dinner = 0
+    daily_calories = 0
+    daily_fats = 0
+    daily_sugars = 0
+    status = ""
+    progression = 0
     
     #Get the id of the currently selected goal record
     record_id = goal_list.get(goal_list.curselection())[0]
@@ -402,33 +413,20 @@ def analyze_goal(goal_list, analysis_label):
     cursor.execute("SELECT CURRENT_DATE()")
     current_date = cursor.fetchone()[0]
 
-    print(current_date)
-
     #Get difference between start date and current date
     cursor.execute("SELECT DATEDIFF(%s, %s)", (current_date, start_date))
     current_day_count = cursor.fetchone()[0]
 
-    
-    print(current_day_count)
+    #Calculate progression
+    progression = float(current_day_count) / float(total_day_count)
+    if progression > 100:
+        progression = 100
 
     #Get all food ids from food records between start date and end date
     sql = "SELECT duration, meal_type, food_ids FROM food_records WHERE owner_email = %s AND date BETWEEN %s AND %s"
     values = (userEmail, start_date, end_date)
     cursor.execute(sql, values)
-    food_records = cursor.fetchall()
-    
-    print(food_records)
-
-    #Create analysis variables
-    category_variety = ""
-    avg_breakfast = 0
-    avg_lunch = 0
-    avg_dinner = 0
-    daily_calories = 0
-    daily_fats = 0
-    daily_sugars = 0
-    status = ""
-    progression = 0
+    food_records = cursor.fetchall()    
 
     #Process each food_record
     food_categories = []
@@ -461,7 +459,6 @@ def analyze_goal(goal_list, analysis_label):
             daily_sugars += sugars
             daily_fats += fats
             
-    
     #Create dict of occurences of each category
     category_dict = dict()
     for i in food_categories:
@@ -474,12 +471,12 @@ def analyze_goal(goal_list, analysis_label):
         category_variety = 'Medium'
     else:
         category_variety = 'Good'
-
-            
+   
     #Divide time averages by total number of meals
-    avg_breakfast /= len(food_records)
-    avg_lunch /= len(food_records)
-    avg_dinner /= len(food_records)
+    if len(food_records) != 0:            
+        avg_breakfast /= len(food_records)
+        avg_lunch /= len(food_records)
+        avg_dinner /= len(food_records)
     
     #Divide daily totals by day count
     daily_calories /= total_day_count
@@ -527,13 +524,6 @@ def analyze_goal(goal_list, analysis_label):
                 if lower_bound < dict_count(category_dict, nutrition_category) < upper_bound:
                     status = 'Finished'
 
-    #Calculate progression
-    progression = float(current_day_count) / float(total_day_count)
-    if progression > 100:
-        progression = 100
-
-    #Save goal analysis to database
-
     #Display goal analysis
     label_text = "Status: " + str(status) + \
         "\nProgress: " + str(progression) + "%" + \
@@ -545,10 +535,13 @@ def analyze_goal(goal_list, analysis_label):
         "\nFats per day: " + str(round(daily_fats, 2)) + "g" + \
         "\nSugars per day: " + str(round(daily_sugars, 2)) + "g"
     analysis_label.config(text = label_text)   
-     
-        
 
-    
+    #Save goal analysis to database
+    variables = "record_id, food_category_variety, average_breakfast_time, average_lunch_time, average_dinner_time, calories_per_day, fats_per_day, sugars_per_day, status, progression_percentage"
+    sql = "INSERT INTO goal_analysis (" + variables + ") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    values = (record_id, category_variety, avg_breakfast, avg_lunch, avg_dinner, daily_calories, daily_fats, daily_sugars, status, progression)
+    cursor.execute(sql, values)
+    db.commit()
     
 def goal_page(root):
     page = Frame(root)
