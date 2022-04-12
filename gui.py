@@ -146,6 +146,11 @@ def create_food_record(date, time, duration, mealType, foodIds, listBox):
     global db
     cursor = db.cursor()
 
+    #Error check if no foodids were entered
+    if not foodIds:
+        print("Error, no food ids provided to food record")
+        return
+
     # Convert food id list to comma seperated list
     id_list = ",".join(map(str, foodIds))
 
