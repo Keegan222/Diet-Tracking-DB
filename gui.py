@@ -173,10 +173,20 @@ def get_food_records(foodList):
     # Submit SQL command to get food records for signed in email.
     recordsList = []
     cursor.execute("SELECT * FROM food_records WHERE owner_email = %s", (userEmail,))
-    result = cursor.fetchone()
-    while result != None:
-        recordsList.append(result)
-        result = cursor.fetchone()
+    food_records = cursor.fetchall()
+    for food_record in food_records:
+        #Add food record
+        recordsList.append(food_record)
+
+        #Add each food in record
+        food_ids = food_record[6].split(",")
+        for food_id in food_ids:
+            cursor.execute("SELECT * FROM food WHERE id_number = %s", (food_id,))
+            food = cursor.fetchone()
+
+            #Pop id and add to list
+            food = food[1:]
+            recordsList.append(food)
 
     i = 1
     for record in recordsList:
