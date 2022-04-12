@@ -387,6 +387,10 @@ def analyze_goal(goal_list, analysis_label):
     daily_sugars = 0
     status = ""
     progression = 0
+
+    breakfast_count = 0
+    lunch_count = 0
+    dinner_count = 0
     
     #Get the id of the currently selected goal record
     record_id = goal_list.get(goal_list.curselection())[0]
@@ -435,10 +439,13 @@ def analyze_goal(goal_list, analysis_label):
         match meal_type:
             case 'Breakfast':
                 avg_breakfast += duration
+                breakfast_count += 1
             case 'Lunch':
                 avg_lunch += duration
+                lunch_count += 1
             case 'Dinner':
                 avg_dinner += duration
+                dinner_count += 1
     
         #Process each food
         food_id_list = food_ids.split(",")
@@ -468,11 +475,13 @@ def analyze_goal(goal_list, analysis_label):
     else:
         category_variety = 'Good'
    
-    #Divide time averages by total number of meals
-    if len(food_records) != 0:            
-        avg_breakfast /= len(food_records)
-        avg_lunch /= len(food_records)
-        avg_dinner /= len(food_records)
+    #Find average times
+    if breakfast_count != 0:            
+        avg_breakfast /= breakfast_count
+    if lunch_count != 0:            
+        avg_lunch /= lunch_count
+    if dinner_count != 0:            
+        avg_dinner /= dinner_count
     
     #Divide daily totals by day count
     daily_calories /= total_day_count
