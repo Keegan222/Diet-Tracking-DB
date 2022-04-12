@@ -217,16 +217,17 @@ def analyze_food(food_list, analysis_label):
         analysis_label.config(text = label_text)
         return
 
-    #Get the food entries from the food record
+    #Get the food ids from the food record
     cursor.execute("SELECT food_ids FROM food_records WHERE id_number = %s", (record_id,))
-    food_ids = cursor.fetchall()
+    food_ids = cursor.fetchone()[0]
 
     #Calculate the totals for each food id
     calories = 0
     fats = 0
     sugars = 0
-    for food_id in food_ids:
-        cursor.execute("SELECT calories, fats, sugars FROM food WHERE id_number = %s", food_id)
+    food_id_list = food_ids.split(",")
+    for food_id in food_id_list:
+        cursor.execute("SELECT calories, fats, sugars FROM food WHERE id_number = %s", (food_id,))
         result = cursor.fetchone()
 
         calories += result[0]
