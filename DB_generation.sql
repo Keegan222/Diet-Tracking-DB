@@ -142,12 +142,6 @@ ALTER TABLE `food_records`
   ADD PRIMARY KEY (`id_number`);
 
 --
--- Indexes for table `goal_analysis`
---
-ALTER TABLE `goal_analysis`
-  ADD PRIMARY KEY `record_id` (`record_id`);
-
---
 -- Indexes for table `goal_records`
 --
 ALTER TABLE `goal_records`
