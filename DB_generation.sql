@@ -145,7 +145,7 @@ ALTER TABLE `food_records`
 -- Indexes for table `goal_analysis`
 --
 ALTER TABLE `goal_analysis`
-  ADD UNIQUE KEY `record_id` (`record_id`);
+  ADD PRIMARY KEY `record_id` (`record_id`);
 
 --
 -- Indexes for table `goal_records`
