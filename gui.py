@@ -235,7 +235,7 @@ def analyze_food(food_list, analysis_label):
     db.commit()
 
     #Display the entry
-    label_text = "Calories: " + str(calories), + "Fats: " + str(fats) + "Sugars" + str(sugars)
+    label_text = "Calories: " + str(calories) + "Fats: " + str(fats) + "Sugars" + str(sugars)
     analysis_label.config(text = label_text)    
 
 def user_page(root):
@@ -337,12 +337,6 @@ def user_page(root):
         analysisButton = Button(page, text="Analyze", bg="white", command=lambda:analyze_food(foodList, analysisLabel))
         analysisButton.grid(row=16, column=1, sticky="w")
 
-        
-
-        
-
-        
-
     # Sign out of account
     signOutButton = Button(page, text="Sign Out", bg="white", command=lambda:change_page(login_page))
     signOutButton.grid(row=17, column=0, sticky="w")
@@ -382,6 +376,179 @@ def get_goal_records(goalList):
     for record in recordsList:
         goalList.insert(i, record)
         i += 1
+
+def analyze_goal(goal_list, analysis_label):
+    global db, userEmail
+    cursor = db.cursor()
+    
+    #Get the id of the currently selected goal record
+    record_id = goal_list.get(goal_list.curselection())[0]
+
+    #Get data from goal record
+    cursor.execute("SELECT start_date, end_date, goal_type, nutrition_category, lower_bound, upper_bound FROM goal_records WHERE id_number = %s", (record_id,))
+    result = cursor.fetchone()
+    start_date = result[0]
+    end_date = result[1]
+    goal_type = result[2]
+    nutrition_category = result[3]
+    lower_bound = result[4]
+    upper_bound = result[5]
+
+    #Get difference between start and end dates
+    cursor.execute("SELECT DATEDIFF(%s, %s)", (end_date, start_date))
+    total_day_count = cursor.fetchone()[0]
+
+    #Get current date
+    cursor.execute("SELECT CURRENT_DATE()")
+    current_date = cursor.fetchone()[0]
+
+    print(current_date)
+
+    #Get difference between start date and current date
+    cursor.execute("SELECT DATEDIFF(%s, %s)", (current_date, start_date))
+    current_day_count = cursor.fetchone()[0]
+
+    
+    print(current_day_count)
+
+    #Get all food ids from food records between start date and end date
+    sql = "SELECT duration, meal_type, food_ids FROM food_records WHERE owner_email = %s AND date BETWEEN %s AND %s"
+    values = (userEmail, start_date, end_date)
+    cursor.execute(sql, values)
+    food_records = cursor.fetchall()
+    
+    print(food_records)
+
+    #Create analysis variables
+    category_variety = ""
+    avg_breakfast = 0
+    avg_lunch = 0
+    avg_dinner = 0
+    daily_calories = 0
+    daily_fats = 0
+    daily_sugars = 0
+    status = ""
+    progression = 0
+
+    #Process each food_record
+    food_categories = []
+    for result in food_records:
+        duration = result[0]
+        meal_type = result[1]
+        food_ids = result[2]
+        
+        #Add to times to averages
+        match meal_type:
+            case 'Breakfast':
+                avg_breakfast += duration
+            case 'Lunch':
+                avg_lunch += duration
+            case 'Dinner':
+                avg_dinner += duration
+    
+        #Process each food
+        food_id_list = food_ids.split(",")
+        for food_id in food_id_list:
+            cursor.execute("SELECT food_category, calories, sugars, fats FROM food WHERE id_number = %s", (food_id,))
+            result = cursor.fetchone()
+            food_category = result[0]
+            calories = result[1]
+            sugars = result[2]
+            fats = result[3]
+            
+            food_categories.append(food_category)
+            daily_calories += calories
+            daily_sugars += sugars
+            daily_fats += fats
+            
+    
+    #Create dict of occurences of each category
+    category_dict = dict()
+    for i in food_categories:
+        category_dict[i] = category_dict.get(i, 0) + 1
+
+    #Determine food category variety
+    if len(category_dict) < 2:
+        category_variety = 'Poor'
+    elif len(category_dict) < 3:
+        category_variety = 'Medium'
+    else:
+        category_variety = 'Good'
+
+            
+    #Divide time averages by total number of meals
+    avg_breakfast /= len(food_records)
+    avg_lunch /= len(food_records)
+    avg_dinner /= len(food_records)
+    
+    #Divide daily totals by day count
+    daily_calories /= total_day_count
+    daily_fats /= total_day_count
+    daily_sugars /= total_day_count
+
+    #Create nutrition dict
+    nutrition_dict = {
+        "Calories" : daily_calories,
+        "Fats" : daily_fats,
+        "Sugars" : daily_sugars
+    }
+
+    #Make a function to get number of occurences of v in dict d
+    #Returns 0 if entry does not exist
+    dict_count = lambda d, v : 0 if d.get(v) is None else d.get(v)
+
+    #Determine status
+    if current_day_count < total_day_count:
+         status = 'In Progress'
+    else:
+        status = 'Failed'
+        match goal_type:
+            case 'Total amount of a nutrition type under a value':
+                if dict_count(nutrition_dict, nutrition_category) < upper_bound:
+                    status = 'Finished'
+            
+            case 'Total amount of a nutrition type over a value':
+                if  lower_bound < dict_count(nutrition_dict, nutrition_category):
+                    status = 'Finished'
+
+            case 'Total amount of a nutrition type within a range':
+                if lower_bound < dict_count(nutrition_dict, nutrition_category) < upper_bound:
+                    status = 'Finished'
+
+            case 'Total occurrences of a food category in meals over a certain value':
+                if dict_count(category_dict, nutrition_category) < upper_bound:
+                    status = 'Finished'
+                
+            case 'Total occurrences of a food category in meals under a certain value':
+                if  lower_bound < dict_count(category_dict, nutrition_category):
+                    status = 'Finished'
+                
+            case 'Total occurrences of a food category in meals within a range':
+                if lower_bound < dict_count(category_dict, nutrition_category) < upper_bound:
+                    status = 'Finished'
+
+    #Calculate progression
+    progression = float(current_day_count) / float(total_day_count)
+    if progression > 100:
+        progression = 100
+
+    #Save goal analysis to database
+
+    #Display goal analysis
+    label_text = "Status: " + str(status) + \
+        "\nProgress: " + str(progression) + "%" + \
+        "\nCategory variety: " + str(category_variety) + \
+        "\nAverage breakfast time: " + str(round(avg_breakfast, 2)) + " minutes" + \
+        "\nAverage lunch time: " + str(round(avg_lunch, 2)) + " minutes" + \
+        "\nAverage dinner time: " + str(round(avg_dinner, 2)) + " minutes" + \
+        "\nCalories per day: " + str(round(daily_calories, 2)) + "g" + \
+        "\nFats per day: " + str(round(daily_fats, 2)) + "g" + \
+        "\nSugars per day: " + str(round(daily_sugars, 2)) + "g"
+    analysis_label.config(text = label_text)   
+     
+        
+
+    
     
 def goal_page(root):
     page = Frame(root)
@@ -444,9 +611,13 @@ def goal_page(root):
     backButton = Button(page, text="Back", bg="white", command=lambda:change_page(user_page))
     backButton.grid(row=10, column=0, sticky="w")
 
-    #Create goal analysis
+    #Create analysis label
+    analysisLabel = Label(page, text="", justify=LEFT, anchor="w")
+    analysisLabel.grid(row=11, column=1, sticky="w")
 
-    #View goal analysis
+    #Create goal analysis button
+    analysisButton = Button(page, text="Analyze", bg="white", command=lambda:analyze_goal(goalList, analysisLabel))
+    analysisButton.grid(row=9, column=1, sticky="w")
 
 
 def change_page(page):
