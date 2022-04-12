@@ -248,10 +248,6 @@ def user_page(root):
     #Update premium status
     premium = is_premium()
 
-    #maybe create different pages for these sections / users
-
-    #user:
-
     #View normal food intake record
     foodListLabel = Label(page, text="Food Intake Records")
     foodListLabel.grid(row=0, column=0, sticky="ew")
