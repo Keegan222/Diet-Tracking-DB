@@ -183,14 +183,47 @@ def toggle_premium():
     premium = not premium
     change_page(user_page)
 
-def analyze_food(food_list):
+def analyze_food(food_list, analysis_label):
     global db
     cursor = db.cursor()
     
-    #Get the id of the currently selected food recordd
+    #Get the id of the currently selected food record
     record_id = food_list.get(food_list.curselection())[0]
-    
-    
+
+    #Check if analysis already exists for food record
+    #If so, just display the record
+    cursor.execute("SELECT calories, fats, sugars FROM food_analysis WHERE record_id = %s", (record_id,))
+    if (result := cursor.fetchone()):
+        print(result)
+        label_text = "Calories: " + str(result[0]) + "g Fats: " + str(result[1]) + "g Sugars: " + str(result[2]) + "g"
+        analysis_label.config(text = label_text)
+        return
+
+    #Get the food entries from the food record
+    cursor.execute("SELECT food_ids FROM food_records WHERE id_number = %s", (record_id,))
+    food_ids = cursor.fetchall()
+
+    #Calculate the totals for each food id
+    calories = 0
+    fats = 0
+    sugars = 0
+    for food_id in food_ids:
+        cursor.execute("SELECT calories, fats, sugars FROM food WHERE id_number = %s", food_id)
+        result = cursor.fetchone()
+
+        calories += result[0]
+        fats += result[1]
+        sugars += result[2]
+        
+    #Create the analysis entry
+    sql = "INSERT INTO food_analysis (record_id, calories, fats, sugars) VALUES (%s, %s, %s, %s)"
+    values = (record_id, calories, fats, sugars)
+    cursor.execute(sql, values)
+    db.commit()
+
+    #Display the entry
+    label_text = "Calories: " + str(calories), + "Fats: " + str(fats) + "Sugars" + str(sugars)
+    analysis_label.config(text = label_text)    
 
 def user_page(root):
     global db, premium
@@ -280,9 +313,15 @@ def user_page(root):
         goalButton = Button(page, text="Goals", bg="white", command=lambda:change_page(goal_page))
         goalButton.grid(row=16, column=0, sticky="w")
 
+        #Create analysis label
+        analysisLabel = Label(page, text="")
+        analysisLabel.grid(row=17, column=1, sticky="w")
+
         #Enable food analysis
-        analysisButton = Button(page, text="Analyze", bg="white", command=lambda:analyze_food(foodList))
+        analysisButton = Button(page, text="Analyze", bg="white", command=lambda:analyze_food(foodList, analysisLabel))
         analysisButton.grid(row=16, column=1, sticky="w")
+
+        
 
         
 
