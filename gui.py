@@ -213,7 +213,7 @@ def analyze_food(food_list, analysis_label):
     #If so, just display the record
     cursor.execute("SELECT calories, fats, sugars FROM food_analysis WHERE record_id = %s", (record_id,))
     if (result := cursor.fetchone()):
-        label_text = "Calories: " + str(result[0]) + "g Fats: " + str(result[1]) + "g Sugars: " + str(result[2]) + "g"
+        label_text = "Calories: " + str(result[0]) + "g Sugars: " + str(result[2]) + "g Fats: " + str(result[1]) + "g"
         analysis_label.config(text = label_text)
         return
 
@@ -240,7 +240,7 @@ def analyze_food(food_list, analysis_label):
     db.commit()
 
     #Display the entry
-    label_text = "Calories: " + str(calories) + "Fats: " + str(fats) + "Sugars" + str(sugars)
+    label_text = "Calories: " + str(calories) + "g Sugars: " + str(sugars) + "g Fats: " + str(fats) + "g"
     analysis_label.config(text = label_text)    
 
 def user_page(root):
