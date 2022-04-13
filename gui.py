@@ -547,7 +547,7 @@ def analyze_goal(goal_list, analysis_label):
 
     #Display goal analysis
     label_text = "Status: " + str(status) + \
-        "\nProgress: " + str(progression) + "%" + \
+        "\nProgress: " + str(round(progression, 2)) + "%" + \
         "\nCategory variety: " + str(category_variety) + \
         "\nAverage breakfast time: " + str(round(avg_breakfast, 2)) + " minutes" + \
         "\nAverage lunch time: " + str(round(avg_lunch, 2)) + " minutes" + \
